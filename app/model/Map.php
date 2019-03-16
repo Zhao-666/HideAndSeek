@@ -11,5 +11,18 @@ namespace app;
 
 class Map
 {
+    private $width;
+    private $height;
+
+    /**
+     * Map constructor.
+     * @param $width
+     * @param $height
+     */
+    public function __construct($width, $height)
+    {
+        $this->width = $width;
+        $this->height = $height;
+    }
 
 }

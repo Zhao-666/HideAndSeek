@@ -11,10 +11,47 @@ namespace app;
 
 class Player
 {
-    private $id;
+    const UP = 'up';
+    const DOWN = 'down';
+    const LEFT = 'left';
+    const RIGHT = 'right';
 
-    public function __construct($id)
+    private $id;
+    private $color;
+    private $x;
+    private $y;
+
+    public function __construct($id, $color = "#f00")
     {
         $this->id = $id;
+        $this->color = $color;
+    }
+
+    /**
+     * @param string $color
+     */
+    public function setColor($color)
+    {
+        $this->color = $color;
+    }
+
+    public function up()
+    {
+        $this->y--;
+    }
+
+    public function down()
+    {
+        $this->y++;
+    }
+
+    public function left()
+    {
+        $this->x--;
+    }
+
+    public function right()
+    {
+        $this->x++;
     }
 }
