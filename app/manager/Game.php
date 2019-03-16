@@ -6,13 +6,16 @@
  * Time: 18:54
  */
 
-namespace app;
+namespace App\Manager;
 
+
+use App\Model\Map;
+use App\Model\Player;
 
 class Game
 {
-    private $mapWidth = 20;
-    private $mapHeight = 20;
+    private $mapWidth = 10;
+    private $mapHeight = 10;
 
     private $gameMap = [];
     private $players = [];
@@ -34,5 +37,13 @@ class Game
     public function playerMove($playerId, $direction)
     {
         $this->players[$playerId]->{$direction}();
+    }
+
+    public function getGameData()
+    {
+        return [
+            'players' => $this->players,
+            'map' => $this->gameMap->getMapData()
+        ];
     }
 }

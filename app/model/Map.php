@@ -6,13 +6,28 @@
  * Time: 19:28
  */
 
-namespace app;
+namespace App\Model;
 
 
 class Map
 {
     private $width;
     private $height;
+
+    private $map = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+        [0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+        [0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0],
+        [0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0],
+        [0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0],
+        [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+        [0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0],
+        [0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0],
+        [0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0],
+        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ];
 
     /**
      * Map constructor.
@@ -25,4 +40,22 @@ class Map
         $this->height = $height;
     }
 
+    public function getMapData()
+    {
+        return $this->map;
+    }
+
+    public function printMap()
+    {
+        foreach ($this->map as $column) {
+            foreach ($column as $item) {
+                if (empty($item)) {
+                    echo "墙，";
+                }else{
+                    echo "    ";
+                }
+            }
+            echo PHP_EOL;
+        }
+    }
 }

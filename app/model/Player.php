@@ -6,7 +6,7 @@
  * Time: 19:28
  */
 
-namespace app;
+namespace App\Model;
 
 
 class Player
@@ -17,14 +17,13 @@ class Player
     const RIGHT = 'right';
 
     private $id;
-    private $color;
+    private $color = '#f00';
     private $x;
     private $y;
 
-    public function __construct($id, $color = "#f00")
+    public function __construct($id)
     {
         $this->id = $id;
-        $this->color = $color;
     }
 
     /**
