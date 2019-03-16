@@ -10,17 +10,16 @@ require_once __DIR__ . "/vendor/autoload.php";
 
 $redId = "red_player";
 $blueId = "blue_player";
-$roomId = "room_id_1";
-
-$global = [];
 
 //创建游戏控制器
-$global['rooms'][$roomId]['game'] = new \App\Manager\Game();
+$game = new \App\Manager\Game();
 //添加玩家
-$global['rooms'][$roomId]['game']->createPlayer($redId);
+$game->createPlayer($redId);
 //添加玩家
-$global['rooms'][$roomId]['game']->createPlayer($blueId);
-//红玩家向左移动
-$global['rooms'][$roomId]['game']->playerMove($redId, \App\Model\Player::LEFT);
+$game->createPlayer($blueId);
 
-(new \App\Model\Map(10,10))->printMap();
+$game->printGameMap();
+//红玩家向右移动
+$game->playerMove($redId, \App\Model\Player::RIGHT);
+
+$game->printGameMap();

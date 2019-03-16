@@ -26,6 +26,48 @@ class Player
         $this->id = $id;
     }
 
+    public function setDirection($x, $y)
+    {
+        $this->x = $x;
+        $this->y = $y;
+    }
+
+    public function up()
+    {
+        $this->x--;
+    }
+
+    public function down()
+    {
+        $this->x++;
+    }
+
+    public function left()
+    {
+        $this->y--;
+    }
+
+    public function right()
+    {
+        $this->y++;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getX()
+    {
+        return $this->x;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getY()
+    {
+        return $this->y;
+    }
+
     /**
      * @param string $color
      */
@@ -34,23 +76,4 @@ class Player
         $this->color = $color;
     }
 
-    public function up()
-    {
-        $this->y--;
-    }
-
-    public function down()
-    {
-        $this->y++;
-    }
-
-    public function left()
-    {
-        $this->x--;
-    }
-
-    public function right()
-    {
-        $this->x++;
-    }
 }

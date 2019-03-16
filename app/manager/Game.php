@@ -28,8 +28,10 @@ class Game
     public function createPlayer($playerId)
     {
         $player = new Player($playerId);
+        $player->setDirection(5, 1);
         if (!empty($this->players)) {
             $player->setColor('#00f');
+            $player->setDirection(6, 10);
         }
         $this->players[$playerId] = $player;
     }
@@ -45,5 +47,30 @@ class Game
             'players' => $this->players,
             'map' => $this->gameMap->getMapData()
         ];
+    }
+
+    public function printGameMap()
+    {
+        $mapData = $this->gameMap->getMapData();
+        $font = [2 => '红', 3 => '蓝'];
+        $index = 2;
+        foreach ($this->players as $player) {
+            /**
+             * @var Player $player
+             */
+            $mapData[$player->getX()][$player->getY()] = $index++;
+        }
+        foreach ($mapData as $column) {
+            foreach ($column as $item) {
+                if (empty($item)) {
+                    echo "墙，";
+                } elseif ($item == 1) {
+                    echo "    ";
+                } else {
+                    echo $font[$item] . '，';
+                }
+            }
+            echo PHP_EOL;
+        }
     }
 }

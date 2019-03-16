@@ -44,18 +44,4 @@ class Map
     {
         return $this->map;
     }
-
-    public function printMap()
-    {
-        foreach ($this->map as $column) {
-            foreach ($column as $item) {
-                if (empty($item)) {
-                    echo "墙，";
-                }else{
-                    echo "    ";
-                }
-            }
-            echo PHP_EOL;
-        }
-    }
 }
