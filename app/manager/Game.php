@@ -14,8 +14,8 @@ use App\Model\Player;
 
 class Game
 {
-    private $mapWidth = 10;
-    private $mapHeight = 10;
+    private $mapWidth = 12;
+    private $mapHeight = 12;
 
     private $gameMap = [];
     private $players = [];
@@ -28,25 +28,20 @@ class Game
     public function createPlayer($playerId)
     {
         $player = new Player($playerId);
-        $player->setDirection(5, 1);
+        $player->setCoordinate(5, 1);
         if (!empty($this->players)) {
             $player->setColor('#00f');
-            $player->setDirection(6, 10);
+            $player->setCoordinate(6, 10);
         }
         $this->players[$playerId] = $player;
     }
 
     public function playerMove($playerId, $direction)
     {
-        $this->players[$playerId]->{$direction}();
-    }
-
-    public function getGameData()
-    {
-        return [
-            'players' => $this->players,
-            'map' => $this->gameMap->getMapData()
-        ];
+        $player = $this->players[$playerId];
+        if ($this->canMoveToDirection($player, $direction)) {
+            $player->{$direction}();
+        }
     }
 
     public function printGameMap()
@@ -72,5 +67,38 @@ class Game
             }
             echo PHP_EOL;
         }
+    }
+
+    /**
+     * @param Player $player
+     * @param $direction
+     * @return bool
+     */
+    private function canMoveToDirection($player, $direction)
+    {
+        $x = $player->getX();
+        $y = $player->getY();
+        $moveCoor = $this->getMoveCoor($x, $y, $direction);
+        $mapData = $this->gameMap->getMapData();
+        if (!$mapData[$moveCoor[0]][$moveCoor[1]]) {
+            return false;
+        }
+        return true;
+    }
+
+
+    private function getMoveCoor($x, $y, $direction)
+    {
+        switch ($direction) {
+            case Player::UP:
+                return [--$x, $y];
+            case Player::DOWN:
+                return [++$x, $y];
+            case Player::LEFT:
+                return [$x, --$y];
+            case Player::RIGHT:
+                return [$x, ++$y];
+        }
+        return [$x, $y];
     }
 }

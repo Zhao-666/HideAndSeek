@@ -15,6 +15,7 @@ class Player
     const DOWN = 'down';
     const LEFT = 'left';
     const RIGHT = 'right';
+    const DIRECTION = [self::UP, self::DOWN, self::LEFT, self::RIGHT];
 
     private $id;
     private $color = '#f00';
@@ -26,7 +27,7 @@ class Player
         $this->id = $id;
     }
 
-    public function setDirection($x, $y)
+    public function setCoordinate($x, $y)
     {
         $this->x = $x;
         $this->y = $y;

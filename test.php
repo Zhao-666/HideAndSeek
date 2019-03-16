@@ -17,9 +17,15 @@ $game = new \App\Manager\Game();
 $game->createPlayer($redId);
 //添加玩家
 $game->createPlayer($blueId);
-
+//打印初始战局
 $game->printGameMap();
-//红玩家向右移动
-$game->playerMove($redId, \App\Model\Player::RIGHT);
-
-$game->printGameMap();
+for ($i = 0; $i <= 30; $i++) {
+    $direct = mt_rand(0, 3);
+    $game->playerMove($redId, \App\Model\Player::DIRECTION[$direct]);
+    $direct = mt_rand(0, 3);
+    $game->playerMove($blueId, \App\Model\Player::DIRECTION[$direct]);
+//打印移动后战局
+    echo PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL;
+    $game->printGameMap();
+    usleep(200000);
+}
