@@ -25,13 +25,12 @@ class Game
         $this->gameMap = new Map($this->mapWidth, $this->mapHeight);
     }
 
-    public function createPlayer($playerId)
+    public function createPlayer($playerId, $x, $y)
     {
         $player = new Player($playerId);
-        $player->setCoordinate(5, 1);
+        $player->setCoordinate($x, $y);
         if (!empty($this->players)) {
             $player->setColor('#00f');
-            $player->setCoordinate(6, 10);
         }
         $this->players[$playerId] = $player;
     }
@@ -44,15 +43,31 @@ class Game
         }
     }
 
+    public function isGameOver()
+    {
+        $result = false;
+        $x = -1;
+        $y = -1;
+        $players = array_values($this->players);
+        /* @var Player $player */
+        foreach ($players as $key => $player) {
+            if ($key == 0) {
+                $x = $player->getX();
+                $y = $player->getY();
+            } elseif ($x == $player->getX() && $y == $player->getY()) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
     public function printGameMap()
     {
         $mapData = $this->gameMap->getMapData();
         $font = [2 => '红', 3 => '蓝'];
         $index = 2;
+        /* @var Player $player */
         foreach ($this->players as $player) {
-            /**
-             * @var Player $player
-             */
             $mapData[$player->getX()][$player->getY()] = $index++;
         }
         foreach ($mapData as $column) {
