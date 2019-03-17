@@ -11,5 +11,8 @@
             "App\\": "app"
         }
     },
-    "require": {}
+    "require": {},
+    "require-dev": {
+        "eaglewu/swoole-ide-helper": "dev-master"
+    }
 }
