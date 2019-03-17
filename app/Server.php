@@ -17,9 +17,13 @@ class Server
 {
     const HOST = '0.0.0.0';
     const PORT = 8811;
+    const FRONT_PORT = 8812;
     const CONFIG = [
         'worker_num' => 4,
-        'dispatch_mode' => 5
+        'dispatch_mode' => 5,
+        'enable_static_handler' => true,
+        'document_root' =>
+            '/mnt/htdocs/HideAndSeek/frontend',
     ];
 
     private $ws;
@@ -27,6 +31,7 @@ class Server
     public function __construct()
     {
         $this->ws = new \Swoole\WebSocket\Server(self::HOST, self::PORT);
+        $this->ws->listen(self::HOST, self::FRONT_PORT, SWOOLE_SOCK_TCP);
         $this->ws->set(self::CONFIG);
         $this->ws->on('start', [$this, 'onStart']);
         $this->ws->on('workerStart', [$this, 'onWorkerStart']);
