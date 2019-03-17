@@ -59,17 +59,18 @@ class Server
 
     public function onOpen($server, $request)
     {
-
+        DataCenter::log(sprintf('client open fd：%d', $request->fd));
     }
 
     public function onClose($server, $fd)
     {
-
+        DataCenter::log(sprintf('client close fd：%d', $fd));
     }
 
     public function onMessage($server, $request)
     {
-
+        DataCenter::log(sprintf('client open fd：%d，message：%s', $request->fd, $request->data));
+        $server->push($request->fd, 'test success');
     }
 }
 
