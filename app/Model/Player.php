@@ -9,7 +9,7 @@
 namespace App\Model;
 
 
-class Player
+class Player implements \JsonSerializable
 {
     const UP = 'up';
     const DOWN = 'down';
@@ -77,4 +77,21 @@ class Player
         $this->color = $color;
     }
 
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->id,
+            'color' => $this->color,
+            'x' => $this->x,
+            'y' => $this->y,
+        ];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 }

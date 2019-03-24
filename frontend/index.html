@@ -5,6 +5,27 @@
     <title>HideAndSeek</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <link rel="icon" href="data:;base64,=">
+    <style>
+        .gameItem {
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            line-height: 100px;
+            border: 1px solid black;
+        }
+
+        .wall {
+            background-color: black;
+        }
+
+        .road {
+            color: white;
+        }
+
+        .player {
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
 
@@ -20,6 +41,19 @@
     <div v-if="roomId">
         房间号：{{roomId}}
     </div>
+    <br>
+    <hr>
+    <div v-if="mapData">
+        <template v-for="column in mapData">
+            <div>
+                <template v-for="item in column">
+                    <div v-if="item==playerId" class="gameItem player"><span>{{playerId}}</span></div>
+                    <div v-else-if="item==0" class="gameItem wall">墙</div>
+                    <div v-else-if="item==1" class="gameItem road">路</div>
+                </template>
+            </div>
+        </template>
+    </div>
 </div>
 
 <script>
@@ -30,6 +64,7 @@
             playerId: 'player_' + Math.round(Math.random() * 1000),
             matching: false,
             roomId: '',
+            mapData: [],
         },
         created() {
             this.initWebSocket();
@@ -44,8 +79,8 @@
                 this.websocketsend(actions);
                 this.matching = true
             },
-            confirmRoom() {
-                let actions = {"code": 601,'room_id':this.roomId};
+            startRoom() {
+                let actions = {"code": 601, 'room_id': this.roomId};
                 this.websocketsend(actions);
                 this.matching = false
             },
@@ -64,11 +99,14 @@
             },
             websocketonmessage(e) { //数据接收
                 let message = JSON.parse(e.data);
-                let data = message.data
+                let responseData = message.data
                 switch (message.code) {
                     case 1001://匹配成功
-                        this.roomId = data.room_id
-                        this.confirmRoom()
+                        this.roomId = responseData.room_id
+                        this.startRoom()
+                        break;
+                    case 1004://游戏数据
+                        this.mapData = responseData.map_data;
                         break;
                 }
             },

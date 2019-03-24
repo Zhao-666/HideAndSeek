@@ -19,6 +19,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 class Server
 {
     const CLIENT_CODE_MATCH_PLAYER = 600;
+    const CLIENT_CODE_START_ROOM = 601;
 
     const HOST = '0.0.0.0';
     const PORT = 8811;
@@ -81,12 +82,14 @@ class Server
     {
         DataCenter::log(sprintf('client open fd：%d，message：%s', $request->fd, $request->data));
 
-        $data = json_decode($request->data, true);
+        $requestData = json_decode($request->data, true);
         $playerId = DataCenter::getPlayerId($request->fd);
-        switch ($data['code']) {
+        switch ($requestData['code']) {
             case self::CLIENT_CODE_MATCH_PLAYER:
                 $this->logic->matchPlayer($playerId);
-                $server->task(['code' => TaskManager::TASK_CODE_FIND_PLAYER]);
+                break;
+            case self::CLIENT_CODE_START_ROOM:
+                $this->logic->startRoom($requestData['room_id'], $playerId);
                 break;
         }
         Sender::sendMessage($playerId, Sender::MSG_SUCCESS);
