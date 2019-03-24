@@ -40,7 +40,7 @@ class Game
         $player = new Player($playerId);
         $player->setCoordinate($x, $y);
         if (!empty($this->players)) {
-            $player->setColor('#00f');
+            $player->setType(Player::PLAYER_TYPE_HIDE);
         }
         $this->players[$playerId] = $player;
     }

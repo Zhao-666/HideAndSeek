@@ -20,6 +20,7 @@ class Server
 {
     const CLIENT_CODE_MATCH_PLAYER = 600;
     const CLIENT_CODE_START_ROOM = 601;
+    const CLIENT_CODE_MOVE_PLAYER = 602;
 
     const HOST = '0.0.0.0';
     const PORT = 8811;
@@ -90,6 +91,9 @@ class Server
                 break;
             case self::CLIENT_CODE_START_ROOM:
                 $this->logic->startRoom($requestData['room_id'], $playerId);
+                break;
+            case self::CLIENT_CODE_MOVE_PLAYER:
+                $this->logic->movePlayer($requestData['direction'], $playerId);
                 break;
         }
         Sender::sendMessage($playerId, Sender::MSG_SUCCESS);

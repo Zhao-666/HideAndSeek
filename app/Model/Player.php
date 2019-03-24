@@ -17,8 +17,11 @@ class Player implements \JsonSerializable
     const RIGHT = 'right';
     const DIRECTION = [self::UP, self::DOWN, self::LEFT, self::RIGHT];
 
+    const PLAYER_TYPE_SEEK = 1;
+    const PLAYER_TYPE_HIDE = 2;
+
     private $id;
-    private $color = '#f00';
+    private $type = self::PLAYER_TYPE_SEEK;
     private $x;
     private $y;
 
@@ -70,18 +73,18 @@ class Player implements \JsonSerializable
     }
 
     /**
-     * @param string $color
+     * @param string $type
      */
-    public function setColor($color)
+    public function setType($type)
     {
-        $this->color = $color;
+        $this->type = $type;
     }
 
     public function jsonSerialize()
     {
         return [
             'id' => $this->id,
-            'color' => $this->color,
+            'type' => $this->type,
             'x' => $this->x,
             'y' => $this->y,
         ];

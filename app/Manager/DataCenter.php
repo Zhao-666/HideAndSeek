@@ -23,6 +23,24 @@ class DataCenter
         return Redis::getInstance();
     }
 
+    public static function setPlayerRoomId($playerId, $roomId)
+    {
+        $key = self::PREFIX_KEY . ':player_room_id:' . $playerId;
+        self::redis()->set($key, $roomId);
+    }
+
+    public static function getPlayerRoomId($playerId)
+    {
+        $key = self::PREFIX_KEY . ':player_room_id:' . $playerId;
+        return self::redis()->get($key);
+    }
+
+    public static function delPlayerRoomId($playerId)
+    {
+        $key = self::PREFIX_KEY . ':player_room_id:' . $playerId;
+        self::redis()->del($key);
+    }
+
     public static function getPlayerWaitListLen()
     {
         $key = self::PREFIX_KEY . ":player_wait_list";
@@ -88,6 +106,13 @@ class DataCenter
         $playerId = self::getPlayerId($playerFd);
         self::delPlayerFd($playerId);
         self::delPlayerId($playerFd);
+    }
+
+    public static function cleanRoomData($roomId)
+    {
+        if (isset(self::$global['rooms'][$roomId])) {
+            unset(self::$global['rooms'][$roomId]);
+        }
     }
 
     public static function initDataCenter()
