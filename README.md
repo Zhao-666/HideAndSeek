@@ -2,6 +2,9 @@
 
 一个使用了Swoole作为服务端，Vue作为前端展示的捉迷藏小游戏
 
+## 效果图
+![例图1](https://github.com/Zhao-666/HideAndSeek/blob/master/img/example.gif)
+
 ## 运行方法
 
 在app文件夹下运行`php Server.php`即可
@@ -32,7 +35,3 @@
 - 多人模式：参与时不限制人数（网络编程） ★★★
 - 随机地图生成：暂时只想到了多点随机路线拼接（算法） ★★★
 - 优化地图展示：手机适配（前端） ★★★★★★★★★★★★（这个真不会。。）
-
-## 效果图
-![例图1](https://github.com/Zhao-666/HideAndSeek/blob/master/img/example1.png)
-![例图2](https://github.com/Zhao-666/HideAndSeek/blob/master/img/example2.png)
