@@ -14,14 +14,22 @@
         <input type="text" :value="playerId">
     </label>
     <button @click="matchPlayer">匹配</button>
+    <div v-if="matching" style="display: inline">
+        匹配中……
+    </div>
+    <div v-if="roomId">
+        房间号：{{roomId}}
+    </div>
 </div>
 
 <script>
     var app = new Vue({
         el: '#app',
         data: {
-            playerId: 'player_' + Math.round(Math.random() * 1000),
             websock: null,
+            playerId: 'player_' + Math.round(Math.random() * 1000),
+            matching: false,
+            roomId: '',
         },
         created() {
             this.initWebSocket();
@@ -34,6 +42,12 @@
             matchPlayer() {
                 let actions = {"code": 600};
                 this.websocketsend(actions);
+                this.matching = true
+            },
+            confirmRoom() {
+                let actions = {"code": 601,'room_id':this.roomId};
+                this.websocketsend(actions);
+                this.matching = false
             },
             initWebSocket() { //初始化weosocket
                 const wsuri = "ws://192.168.56.101:8811?player_id=" + this.playerId;
@@ -49,7 +63,14 @@
                 this.initWebSocket();
             },
             websocketonmessage(e) { //数据接收
-                const redata = JSON.parse(e.data);
+                let message = JSON.parse(e.data);
+                let data = message.data
+                switch (message.code) {
+                    case 1001://匹配成功
+                        this.roomId = data.room_id
+                        this.confirmRoom()
+                        break;
+                }
             },
             websocketsend(Data) {//数据发送
                 this.websock.send(JSON.stringify(Data));

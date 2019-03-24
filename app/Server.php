@@ -12,6 +12,7 @@ namespace App;
 use App\Manager\DataCenter;
 use App\Manager\Logic;
 use App\Manager\Sender;
+use App\Manager\TaskManager;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -24,6 +25,7 @@ class Server
     const FRONT_PORT = 8812;
     const CONFIG = [
         'worker_num' => 4,
+        'task_worker_num' => 4,
         'dispatch_mode' => 5,
         'enable_static_handler' => true,
         'document_root' =>
@@ -44,6 +46,8 @@ class Server
         $this->ws->on('open', [$this, 'onOpen']);
         $this->ws->on('message', [$this, 'onMessage']);
         $this->ws->on('close', [$this, 'onClose']);
+        $this->ws->on('task', [$this, 'onTask']);
+        $this->ws->on('finish', [$this, 'onFinish']);
         $this->ws->start();
     }
 
@@ -56,6 +60,7 @@ class Server
                 self::HOST,
                 self::PORT
             ));
+        DataCenter::initDataCenter();
     }
 
     public function onWorkerStart($server, $workerId)
@@ -81,6 +86,7 @@ class Server
         switch ($data['code']) {
             case self::CLIENT_CODE_MATCH_PLAYER:
                 $this->logic->matchPlayer($playerId);
+                $server->task(['code' => TaskManager::TASK_CODE_FIND_PLAYER]);
                 break;
         }
         Sender::sendMessage($playerId, Sender::MSG_SUCCESS);
@@ -89,6 +95,35 @@ class Server
     public function onClose($server, $fd)
     {
         DataCenter::log(sprintf('client close fd：%d', $fd));
+        DataCenter::delPlayerInfo($fd);
+    }
+
+    public function onTask($server, $taskId, $srcWorkerId, $data)
+    {
+        DataCenter::log("onTask", $data);
+        $result = [];
+        switch ($data['code']) {
+            case TaskManager::TASK_CODE_FIND_PLAYER:
+                $ret = TaskManager::findPlayer();
+                if (!empty($ret)) {
+                    $result['data'] = $ret;
+                }
+                break;
+        }
+        if (!empty($result)) {
+            $result['code'] = $data['code'];
+            return $result;
+        }
+    }
+
+    public function onFinish($server, $taskId, $data)
+    {
+        DataCenter::log("onFinish", $data);
+        switch ($data['code']) {
+            case TaskManager::TASK_CODE_FIND_PLAYER:
+                $this->logic->createRoom($data['data']['red_player'], $data['data']['blue_player']);
+                break;
+        }
     }
 }
 

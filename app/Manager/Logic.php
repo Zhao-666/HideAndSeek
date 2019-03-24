@@ -15,4 +15,18 @@ class Logic
     {
         DataCenter::pushPlayerToWaitList($playerId);
     }
+
+    public function createRoom($redPlayer, $bluePlayer)
+    {
+        $roomId = uniqid('room_');
+        $this->bindRoomWorker($redPlayer, $roomId);
+        $this->bindRoomWorker($bluePlayer, $roomId);
+    }
+
+    private function bindRoomWorker($playerId, $roomId)
+    {
+        $playerFd = DataCenter::getPlayerFd($playerId);
+        DataCenter::$server->bind($playerFd, crc32($roomId));
+        Sender::sendMessage($playerId, Sender::MSG_ROOM_ID, ['room_id' => $roomId]);
+    }
 }
