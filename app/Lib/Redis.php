@@ -15,7 +15,6 @@ class Redis
     protected static $config = [
         'host' => '127.0.0.1',
         'port' => 6379,
-        'database' => 6,
     ];
 
     /**
@@ -31,7 +30,6 @@ class Redis
                 self::$config['host'],
                 self::$config['port']
             );
-            $instance->select(self::$config['database']);
             self::$instance = $instance;
         }
         return self::$instance;

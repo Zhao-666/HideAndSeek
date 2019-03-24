@@ -9,14 +9,18 @@
 <body>
 
 <div id="app">
-    {{ message }}
+    <label>
+        玩家ID：
+        <input type="text" :value="playerId">
+    </label>
+    <button @click="matchPlayer">匹配</button>
 </div>
 
 <script>
     var app = new Vue({
         el: '#app',
         data: {
-            message: 'Hello Vue!',
+            playerId: 'player_' + Math.round(Math.random() * 1000),
             websock: null,
         },
         created() {
@@ -26,8 +30,13 @@
             this.websock.close() //离开路由之后断开websocket连接
         },
         methods: {
+            //匹配玩家
+            matchPlayer() {
+                let actions = {"code": 600};
+                this.websocketsend(actions);
+            },
             initWebSocket() { //初始化weosocket
-                const wsuri = "ws://192.168.56.101:8811";
+                const wsuri = "ws://192.168.56.101:8811?player_id=" + this.playerId;
                 this.websock = new WebSocket(wsuri);
                 this.websock.onmessage = this.websocketonmessage;
                 this.websock.onopen = this.websocketonopen;
@@ -35,8 +44,6 @@
                 this.websock.onclose = this.websocketclose;
             },
             websocketonopen() { //连接建立之后执行send方法发送数据
-                let actions = {"test": "12345"};
-                this.websocketsend(actions);
             },
             websocketonerror() {//连接建立失败重连
                 this.initWebSocket();
