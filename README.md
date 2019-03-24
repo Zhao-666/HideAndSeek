@@ -2,7 +2,12 @@
 
 一个使用了Swoole作为服务端，Vue作为前端展示的捉迷藏小游戏
 
-实现了：
+## 效果图
+![例图1](https://github.com/Zhao-666/HideAndSeek/blob/master/img/example1.png)
+![例图2](https://github.com/Zhao-666/HideAndSeek/blob/master/img/example2.png)
+
+
+## 实现了
 - 捉迷藏游戏逻辑
 - 匹配机制
 - 联机对战
