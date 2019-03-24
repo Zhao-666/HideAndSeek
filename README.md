@@ -9,6 +9,12 @@
 
 在app文件夹下运行`php Server.php`即可
 
+## 使用工具
+- PHPStorm
+- VirtualBox
+- XShell
+- Chrome
+
 ## 使用技术
 - PHP 7.2 
 - Swoole 4.3.0
@@ -20,12 +26,6 @@
 - Redis String
 - Redis List
 - 少量算法逻辑
-
-## 使用工具
-- PHPStorm
-- VirtualBox
-- XShell
-- Chrome
 
 ## 实现功能
 ### 捉迷藏游戏逻辑（逻辑） ★★
