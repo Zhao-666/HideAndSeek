@@ -21,6 +21,12 @@
 - Redis List
 - 少量算法逻辑
 
+## 使用工具
+- PHPStorm
+- VirtualBox
+- XShell
+- Chrome
+
 ## 实现了
 ### 捉迷藏游戏逻辑（逻辑） ★★
 - 游戏管理类Game
