@@ -80,8 +80,8 @@ class Game
         foreach ($this->players as $player) {
             $mapData[$player->getX()][$player->getY()] = $index++;
         }
-        foreach ($mapData as $column) {
-            foreach ($column as $item) {
+        foreach ($mapData as $line) {
+            foreach ($line as $item) {
                 if (empty($item)) {
                     echo "墙，";
                 } elseif ($item == 1) {
