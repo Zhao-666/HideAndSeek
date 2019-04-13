@@ -14,6 +14,7 @@ class Player
     const DOWN = 'down';
     const LEFT = 'left';
     const RIGHT = 'right';
+    const DIRECTION = [self::UP, self::DOWN, self::LEFT, self::RIGHT];
 
     const PLAYER_TYPE_SEEK = 1;//追捕者
     const PLAYER_TYPE_HIDE = 2;//躲藏者

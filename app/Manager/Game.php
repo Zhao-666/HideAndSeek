@@ -39,6 +39,24 @@ class Game
         }
     }
 
+    public function isGameOver()
+    {
+        $result = false;
+        $x = -1;
+        $y = -1;
+        $players = array_values($this->players);
+        /* @var Player $player */
+        foreach ($players as $key => $player) {
+            if ($key == 0) {
+                $x = $player->getX();
+                $y = $player->getY();
+            } elseif ($x == $player->getX() && $y == $player->getY()) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
     public function printGameMap()
     {
         $mapData = $this->gameMap->getMapData();
@@ -68,6 +86,28 @@ class Game
      */
     private function canMoveToDirection($player, $direction)
     {
+        $x = $player->getX();
+        $y = $player->getY();
+        $moveCoor = $this->getMoveCoor($x, $y, $direction);
+        $mapData = $this->gameMap->getMapData();
+        if (!$mapData[$moveCoor[0]][$moveCoor[1]]) {
+            return false;
+        }
+        return true;
+    }
 
+    private function getMoveCoor($x, $y, $direction)
+    {
+        switch ($direction) {
+            case Player::UP:
+                return [--$x, $y];
+            case Player::DOWN:
+                return [++$x, $y];
+            case Player::LEFT:
+                return [$x, --$y];
+            case Player::RIGHT:
+                return [$x, ++$y];
+        }
+        return [$x, $y];
     }
 }
