@@ -82,6 +82,25 @@ class DataCenter
         self::setPlayerFd($playerId, $playerFd);
     }
 
+    public static function initDataCenter()
+    {
+        //清空匹配队列
+        $key = self::PREFIX_KEY . ':player_wait_list';
+        self::redis()->del($key);
+        //清空玩家ID
+        $key = self::PREFIX_KEY . ':player_id*';
+        $values = self::redis()->keys($key);
+        foreach ($values as $value) {
+            self::redis()->del($value);
+        }
+        //清空玩家FD
+        $key = self::PREFIX_KEY . ':player_fd*';
+        $values = self::redis()->keys($key);
+        foreach ($values as $value) {
+            self::redis()->del($value);
+        }
+    }
+
     public static function log($info, $context = [], $level = 'INFO')
     {
         if ($context) {

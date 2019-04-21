@@ -8,6 +8,7 @@
 
 use App\Manager\DataCenter;
 use App\Manager\Logic;
+use App\Manager\TaskManager;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -21,6 +22,7 @@ class Server
     const CONFIG = [
         'worker_num' => 4,
         'task_worker_num' => 4,
+        'dispatch_mode' => 5,
         'enable_static_handler' => true,
         'document_root' =>
             '/mnt/htdocs/HideAndSeek_teach/frontend',
@@ -50,6 +52,7 @@ class Server
         swoole_set_process_name('hide-and-seek');
         echo sprintf("master start (listening on %s:%d)\n",
             self::HOST, self::PORT);
+        DataCenter::initDataCenter();
     }
 
     public function onWorkerStart($server, $workerId)
@@ -87,11 +90,29 @@ class Server
     public function onTask($server, $taskId, $srcWorkerId, $data)
     {
         DataCenter::log("onTask", $data);
+        $result = [];
+        switch ($data['code']) {
+            case TaskManager::TASK_CODE_FIND_PLAYER:
+                $ret = TaskManager::findPlayer();
+                if (!empty($ret)) {
+                    $result['data'] = $ret;
+                }
+                break;
+        }
+        if (!empty($result)) {
+            $result['code'] = $data['code'];
+            return $result;
+        }
     }
 
     public function onFinish($server, $taskId, $data)
     {
         DataCenter::log("onFinish", $data);
+        switch ($data['code']) {
+            case TaskManager::TASK_CODE_FIND_PLAYER:
+                $this->logic->createRoom($data['data']['red_player'], $data['data']['blue_player']);
+                break;
+        }
     }
 }
 new Server();
