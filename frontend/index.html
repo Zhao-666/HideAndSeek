@@ -144,6 +144,12 @@
                     case 1004://游戏数据
                         this.mapData = responseData.map_data;
                         break;
+                    case 1005://游戏结束
+                        this.winner = responseData.winner
+                        setTimeout(function () {
+                            alert('游戏结束~胜者是：' + responseData.winner)
+                        }, 200)
+                        break;
                 }
             },
             websocketsend(Data) {//数据发送

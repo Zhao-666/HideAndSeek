@@ -22,6 +22,24 @@ class Logic
         DataCenter::$server->task(['code' => TaskManager::TASK_CODE_FIND_PLAYER]);
     }
 
+    public function movePlayer($direction, $playerId)
+    {
+        if (!in_array($direction, Player::DIRECTION)) {
+            echo $direction;
+            return;
+        }
+        $roomId = DataCenter::getPlayerRoomId($playerId);
+        if (isset(DataCenter::$global['rooms'][$roomId])) {
+            /**
+             * @var Game $gameManager
+             */
+            $gameManager = DataCenter::$global['rooms'][$roomId]['manager'];
+            $gameManager->playerMove($playerId, $direction);
+            $this->sendGameInfo($roomId);
+            $this->checkGameOver($roomId);
+        }
+    }
+
     public function createRoom($redPlayer, $bluePlayer)
     {
         $roomId = uniqid('room_');
@@ -62,7 +80,8 @@ class Logic
         $gameManager = DataCenter::$global['rooms'][$roomId]['manager'];
         $players = $gameManager->getPlayers();
         $mapData = $gameManager->getMapData();
-        foreach ($players as $player) {
+        //必须倒序输出，因为游戏设定数组第一个是寻找者，第二个是躲藏者，叠加时赢的是寻找者。
+        foreach (array_reverse($players) as $player) {
             $mapData[$player->getX()][$player->getY()] = $player->getId();
         }
         foreach ($players as $player) {
@@ -91,6 +110,25 @@ class Logic
     {
         $playerFd = DataCenter::getPlayerFd($playerId);
         DataCenter::$server->bind($playerFd, crc32($roomId));
+        DataCenter::setPlayerRoomId($playerId, $roomId);
         Sender::sendMessage($playerId, Sender::MSG_ROOM_ID, ['room_id' => $roomId]);
+    }
+
+    private function checkGameOver($roomId)
+    {
+        /**
+         * @var Game $gameManager
+         * @var Player $player
+         */
+        $gameManager = DataCenter::$global['rooms'][$roomId]['manager'];
+        if ($gameManager->isGameOver()) {
+            $players = $gameManager->getPlayers();
+            $winner = current($players)->getId();
+            foreach ($players as $player) {
+                Sender::sendMessage($player->getId(), Sender::MSG_GAME_OVER, ['winner' => $winner]);
+                DataCenter::delPlayerRoomId($player->getId());
+            }
+            unset(DataCenter::$global['rooms'][$roomId]);
+        }
     }
 }
