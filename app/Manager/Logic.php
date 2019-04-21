@@ -12,6 +12,8 @@ class Logic
 {
     public function matchPlayer($playerId)
     {
+        //将用户放入队列中
         DataCenter::pushPlayerToWaitList($playerId);
+        //发起一个Task尝试匹配
     }
 }

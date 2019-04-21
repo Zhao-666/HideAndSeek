@@ -20,6 +20,7 @@ class Server
     const FRONT_PORT = 8812;
     const CONFIG = [
         'worker_num' => 4,
+        'task_worker_num' => 4,
         'enable_static_handler' => true,
         'document_root' =>
             '/mnt/htdocs/HideAndSeek_teach/frontend',
@@ -39,6 +40,8 @@ class Server
         $this->ws->on('open', [$this, 'onOpen']);
         $this->ws->on('message', [$this, 'onMessage']);
         $this->ws->on('close', [$this, 'onClose']);
+        $this->ws->on('task', [$this, 'onTask']);
+        $this->ws->on('finish', [$this, 'onFinish']);
         $this->ws->start();
     }
 
@@ -52,6 +55,7 @@ class Server
     public function onWorkerStart($server, $workerId)
     {
         echo "server: onWorkStart,worker_id:{$server->worker_id}\n";
+        DataCenter::$server = $server;
     }
 
     public function onOpen($server, $request)
@@ -78,6 +82,16 @@ class Server
     public function onClose($server, $fd)
     {
         DataCenter::log(sprintf('client close fd：%d', $fd));
+    }
+
+    public function onTask($server, $taskId, $srcWorkerId, $data)
+    {
+        DataCenter::log("onTask", $data);
+    }
+
+    public function onFinish($server, $taskId, $data)
+    {
+        DataCenter::log("onFinish", $data);
     }
 }
 new Server();
