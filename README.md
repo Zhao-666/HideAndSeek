@@ -4,6 +4,7 @@
 
 ## 效果图
 ![例图1](https://github.com/Zhao-666/HideAndSeek/blob/master/img/example.gif)
+![例图2](https://github.com/Zhao-666/HideAndSeek/blob/master/img/demo2.gif)
 
 ## 运行方法
 
