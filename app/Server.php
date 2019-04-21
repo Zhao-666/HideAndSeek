@@ -5,10 +5,16 @@
  * Date: 2019/4/18
  * Time: 23:02
  */
+
+use App\Manager\DataCenter;
+use App\Manager\Logic;
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 class Server
 {
+    const CLIENT_CODE_MATCH_PLAYER = 600;
+
     const HOST = '0.0.0.0';
     const PORT = 8811;
     const FRONT_PORT = 8812;
@@ -20,9 +26,11 @@ class Server
     ];
 
     private $ws;
+    private $logic;
 
     public function __construct()
     {
+        $this->logic = new Logic();
         $this->ws = new \Swoole\WebSocket\Server(self::HOST, self::PORT);
         $this->ws->listen(self::HOST, self::FRONT_PORT, SWOOLE_SOCK_TCP);
         $this->ws->set(self::CONFIG);
@@ -48,17 +56,28 @@ class Server
 
     public function onOpen($server, $request)
     {
+        DataCenter::log(sprintf('client open fd：%d', $request->fd));
 
-    }
-
-    public function onClose($server, $fd)
-    {
-
+        $playerId = $request->get['player_id'];
+        DataCenter::setPlayerInfo($playerId, $request->fd);
     }
 
     public function onMessage($server, $request)
     {
+        DataCenter::log(sprintf('client open fd：%d，message：%s', $request->fd, $request->data));
 
+        $data = json_decode($request->data, true);
+        $playerId = DataCenter::getPlayerId($request->fd);
+        switch ($data['code']) {
+            case self::CLIENT_CODE_MATCH_PLAYER:
+                $this->logic->matchPlayer($playerId);
+                break;
+        }
+    }
+
+    public function onClose($server, $fd)
+    {
+        DataCenter::log(sprintf('client close fd：%d', $fd));
     }
 }
 new Server();

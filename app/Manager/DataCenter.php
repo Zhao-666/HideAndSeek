@@ -8,8 +8,17 @@
 
 namespace App\Manager;
 
+use App\Lib\Redis;
+
 class DataCenter
 {
+    public static $global;
+
+    public static function redis()
+    {
+        return Redis::getInstance();
+    }
+
     public static function log($info, $context = [], $level = 'INFO')
     {
         if ($context) {
