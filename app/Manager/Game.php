@@ -22,6 +22,16 @@ class Game
         $this->gameMap = new Map(12, 12);
     }
 
+    public function getPlayers()
+    {
+        return $this->players;
+    }
+
+    public function getMapData()
+    {
+        return $this->gameMap->getMapData();
+    }
+
     public function createPlayer($playerId, $x, $y)
     {
         $player = new Player($playerId, $x, $y);

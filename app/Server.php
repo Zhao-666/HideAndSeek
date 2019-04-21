@@ -15,6 +15,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 class Server
 {
     const CLIENT_CODE_MATCH_PLAYER = 600;
+    const CLIENT_CODE_START_ROOM = 601;
 
     const HOST = '0.0.0.0';
     const PORT = 8811;
@@ -78,6 +79,9 @@ class Server
         switch ($data['code']) {
             case self::CLIENT_CODE_MATCH_PLAYER:
                 $this->logic->matchPlayer($playerId);
+                break;
+            case self::CLIENT_CODE_START_ROOM:
+                $this->logic->startRoom($data['room_id'], $playerId);
                 break;
         }
     }
