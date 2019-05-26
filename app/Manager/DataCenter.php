@@ -49,20 +49,23 @@ class DataCenter
 
     public static function setPlayerRoomId($playerId, $roomId)
     {
-        $key = self::PREFIX_KEY . ':player_room_id:' . $playerId;
-        self::redis()->set($key, $roomId);
+        $key = self::PREFIX_KEY . ':player_info';
+        $field = 'room_id:' . $playerId;
+        self::redis()->hSet($key, $field, $roomId);
     }
 
     public static function getPlayerRoomId($playerId)
     {
-        $key = self::PREFIX_KEY . ':player_room_id:' . $playerId;
-        return self::redis()->get($key);
+        $key = self::PREFIX_KEY . ':player_info';
+        $field = 'room_id:' . $playerId;
+        return self::redis()->hGet($key, $field);
     }
 
     public static function delPlayerRoomId($playerId)
     {
-        $key = self::PREFIX_KEY . ':player_room_id:' . $playerId;
-        self::redis()->del($key);
+        $key = self::PREFIX_KEY . ':player_info';
+        $field = 'room_id:' . $playerId;
+        self::redis()->hDel($key, $field);
     }
 
     public static function getPlayerWaitListLen()
@@ -91,38 +94,44 @@ class DataCenter
 
     public static function getPlayerFd($playerId)
     {
-        $key = self::PREFIX_KEY . ":player_fd:" . $playerId;
-        return self::redis()->get($key);
+        $key = self::PREFIX_KEY . ':player_info';
+        $field = 'player_fd:' . $playerId;
+        return self::redis()->hGet($key, $field);
     }
 
     public static function setPlayerFd($playerId, $playerFd)
     {
-        $key = self::PREFIX_KEY . ":player_fd:" . $playerId;
-        self::redis()->set($key, $playerFd);
+        $key = self::PREFIX_KEY . ':player_info';
+        $field = 'player_fd:' . $playerId;
+        self::redis()->hSet($key, $field, $playerFd);
     }
 
     public static function delPlayerFd($playerId)
     {
-        $key = self::PREFIX_KEY . ":player_fd:" . $playerId;
-        self::redis()->del($key);
+        $key = self::PREFIX_KEY . ':player_info';
+        $field = 'player_fd:' . $playerId;
+        self::redis()->hDel($key, $field);
     }
 
     public static function getPlayerId($playerFd)
     {
-        $key = self::PREFIX_KEY . ":player_id:" . $playerFd;
-        return self::redis()->get($key);
+        $key = self::PREFIX_KEY . ':player_info';
+        $field = 'player_id:' . $playerFd;
+        return self::redis()->hGet($key, $field);
     }
 
     public static function setPlayerId($playerFd, $playerId)
     {
-        $key = self::PREFIX_KEY . ":player_id:" . $playerFd;
-        self::redis()->set($key, $playerId);
+        $key = self::PREFIX_KEY . ':player_info';
+        $field = 'player_id:' . $playerFd;
+        self::redis()->hSet($key, $field, $playerId);
     }
 
     public static function delPlayerId($playerFd)
     {
-        $key = self::PREFIX_KEY . ":player_id:" . $playerFd;
-        self::redis()->del($key);
+        $key = self::PREFIX_KEY . ':player_info';
+        $field = 'player_id:' . $playerFd;
+        self::redis()->hDel($key, $field);
     }
 
     public static function setPlayerInfo($playerId, $playerFd)
@@ -153,27 +162,12 @@ class DataCenter
         //清空匹配队列
         $key = self::PREFIX_KEY . ':player_wait_list';
         self::redis()->del($key);
-        //清空玩家ID
-        $key = self::PREFIX_KEY . ':player_id*';
-        $values = self::redis()->keys($key);
-        foreach ($values as $value) {
-            self::redis()->del($value);
-        }
-        //清空玩家FD
-        $key = self::PREFIX_KEY . ':player_fd*';
-        $values = self::redis()->keys($key);
-        foreach ($values as $value) {
-            self::redis()->del($value);
-        }
         //清空在线玩家
         $key = self::PREFIX_KEY . ':online_player';
         self::redis()->del($key);
-        //清空玩家房间信息
-        $key = self::PREFIX_KEY . ':player_room_id*';
-        $values = self::redis()->keys($key);
-        foreach ($values as $value) {
-            self::redis()->del($value);
-        }
+        //清空玩家信息
+        $key = self::PREFIX_KEY . ':player_info';
+        self::redis()->del($key);
     }
 
     public static function log($info, $context = [], $level = 'INFO')
