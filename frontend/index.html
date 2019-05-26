@@ -112,11 +112,30 @@
         },
         created() {
             this.initWebSocket();
+            this.initDirectionKey();
         },
         destroyed() {
             this.websock.close() //离开路由之后断开websocket连接
         },
         methods: {
+            initDirectionKey(){
+                var that = this
+                document.onkeydown = function (){
+                    if (event.keyCode === 38) {
+                        console.log('up')
+                        that.clickDirect('up')
+                    } else if (event.keyCode === 37) {
+                        console.log('left')
+                        that.clickDirect('left')
+                    } else if (event.keyCode === 39) {
+                        console.log('right')
+                        that.clickDirect('right')
+                    } else if (event.keyCode === 40) {
+                        console.log('down')
+                        that.clickDirect('down')
+                    }
+                }
+            },
             //匹配玩家
             matchPlayer() {
                 let actions = {"code": 600};
@@ -129,7 +148,7 @@
                 this.matching = false
             },
             initWebSocket() { //初始化weosocket
-                const wsuri = "ws://192.168.56.101:8811?player_id=" + this.playerId;
+                const wsuri = "ws://192.168.3.41:8811?player_id=" + this.playerId;
                 this.websock = new WebSocket(wsuri);
                 this.websock.onmessage = this.websocketonmessage;
                 this.websock.onopen = this.websocketonopen;
