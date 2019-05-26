@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>HideAndSeek</title>
     <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
     <link rel="icon" href="data:;base64,=">
     <style>
         .gameItem {
@@ -52,6 +53,9 @@
     <button @click="matchPlayer">匹配</button>
     <div v-if="matching" style="display: inline">
         匹配中……
+    </div>
+    <div v-if="onlinePlayer">
+        当前在线玩家：{{onlinePlayer}}
     </div>
     <div v-if="roomId">
         房间号：{{roomId}}
@@ -103,24 +107,70 @@
         el: '#app',
         data: {
             websock: null,
-            playerId: 'player_' + Math.round(Math.random() * 1000),
+            playerId: '',
             playerType: null,
             playerTypeArr: [0, '寻找者', '躲藏者'],
             matching: false,
             roomId: '',
             mapData: null,
+            onlinePlayer: null,
         },
         created() {
+            this.initPlayerId()
             this.initWebSocket();
             this.initDirectionKey();
+            this.getServerInfo()
         },
         destroyed() {
             this.websock.close() //离开路由之后断开websocket连接
         },
         methods: {
-            initDirectionKey(){
+            getServerInfo() {
                 var that = this
-                document.onkeydown = function (){
+                $.ajax({
+                    url: 'http://192.168.3.41:8812',
+                    type: 'get',
+                    dataType: 'json',
+                    data: {
+                        'a': 'get_online_player'
+                    },
+                    success: function (result) {
+                        that.onlinePlayer = result.online_player
+                    },
+                    error: function () {
+
+                    }
+                })
+            },
+            initPlayerId() {
+                var inputPlayerId = this.getUrlParam('player_id')
+                if (inputPlayerId !== '') {
+                    this.playerId = inputPlayerId
+                } else {
+                    this.playerId = 'player_' + Math.round(Math.random() * 1000)
+                }
+            },
+            getUrlParam(paramName) {
+                var url = document.location.toString();
+                var arrObj = url.split("?");
+                if (arrObj.length > 1) {
+                    var arrPara = arrObj[1].split("&");
+                    var arr;
+                    for (var i = 0; i < arrPara.length; i++) {
+                        arr = arrPara[i].split("=");
+                        if (arr !== null && arr[0] === paramName) {
+                            return arr[1];
+                        }
+                    }
+                    return '';
+                }
+                else {
+                    return "";
+                }
+            },
+            initDirectionKey() {
+                var that = this
+                document.onkeydown = function () {
                     if (event.keyCode === 38) {
                         console.log('up')
                         that.clickDirect('up')
@@ -186,6 +236,9 @@
             },
             websocketclose(e) {  //关闭
                 console.log('断开连接', e);
+                if (e.code === 4000) {
+                    alert('该player_id已在线')
+                }
             },
             clickDirect(direction) {
                 let actions = {"code": 602, 'direction': direction};

@@ -23,6 +23,30 @@ class DataCenter
         return Redis::getInstance();
     }
 
+    public static function setOnlinePlayer($playerId)
+    {
+        $key = self::PREFIX_KEY . ':online_player';
+        self::redis()->hSet($key, $playerId, 1);
+    }
+
+    public static function getOnlinePlayer($playerId)
+    {
+        $key = self::PREFIX_KEY . ':online_player';
+        return self::redis()->hGet($key, $playerId);
+    }
+
+    public static function delOnlinePlayer($playerId)
+    {
+        $key = self::PREFIX_KEY . ':online_player';
+        self::redis()->hDel($key, $playerId);
+    }
+
+    public static function lenOnlinePlayer()
+    {
+        $key = self::PREFIX_KEY . ':online_player';
+        return self::redis()->hLen($key);
+    }
+
     public static function setPlayerRoomId($playerId, $roomId)
     {
         $key = self::PREFIX_KEY . ':player_room_id:' . $playerId;
@@ -99,6 +123,7 @@ class DataCenter
     {
         self::setPlayerId($playerFd, $playerId);
         self::setPlayerFd($playerId, $playerFd);
+        self::setOnlinePlayer($playerId);
     }
 
     public static function delPlayerInfo($playerFd)
@@ -106,6 +131,7 @@ class DataCenter
         $playerId = self::getPlayerId($playerFd);
         self::delPlayerFd($playerId);
         self::delPlayerId($playerFd);
+        self::delOnlinePlayer($playerId);
     }
 
     public static function cleanRoomData($roomId)
@@ -132,6 +158,9 @@ class DataCenter
         foreach ($values as $value) {
             self::redis()->del($value);
         }
+        //清空在线玩家
+        $key = self::PREFIX_KEY . ':online_player';
+        self::redis()->del($key);
     }
 
     public static function log($info, $context = [], $level = 'INFO')
