@@ -68,19 +68,25 @@ class DataCenter
     public static function getPlayerWaitListLen()
     {
         $key = self::PREFIX_KEY . ":player_wait_list";
-        return self::redis()->lLen($key);
+        return self::redis()->sCard($key);
     }
 
     public static function pushPlayerToWaitList($playerId)
     {
         $key = self::PREFIX_KEY . ":player_wait_list";
-        self::redis()->lPush($key, $playerId);
+        self::redis()->sAdd($key, $playerId);
     }
 
     public static function popPlayerFromWaitList()
     {
         $key = self::PREFIX_KEY . ":player_wait_list";
-        return self::redis()->rPop($key);
+        return self::redis()->sPop($key);
+    }
+
+    public static function delPlayerFromWaitList($playerId)
+    {
+        $key = self::PREFIX_KEY . ":player_wait_list";
+        self::redis()->sRem($key, $playerId);
     }
 
     public static function getPlayerFd($playerId)
@@ -132,6 +138,7 @@ class DataCenter
         self::delPlayerFd($playerId);
         self::delPlayerId($playerFd);
         self::delOnlinePlayer($playerId);
+        self::delPlayerFromWaitList($playerId);
     }
 
     public static function cleanRoomData($roomId)
@@ -161,6 +168,12 @@ class DataCenter
         //清空在线玩家
         $key = self::PREFIX_KEY . ':online_player';
         self::redis()->del($key);
+        //清空玩家房间信息
+        $key = self::PREFIX_KEY . ':player_room_id*';
+        $values = self::redis()->keys($key);
+        foreach ($values as $value) {
+            self::redis()->del($value);
+        }
     }
 
     public static function log($info, $context = [], $level = 'INFO')
