@@ -23,6 +23,18 @@ class DataCenter
         return Redis::getInstance();
     }
 
+    public static function addPlayerWinTimes($playerId)
+    {
+        $key = self::PREFIX_KEY . ':player_rank';
+        self::redis()->zIncrBy($key, 1, $playerId);
+    }
+
+    public static function getPlayersRank()
+    {
+        $key = self::PREFIX_KEY . ':player_rank';
+        return self::redis()->zRevRange($key, 0, 9, true);
+    }
+
     public static function setOnlinePlayer($playerId)
     {
         $key = self::PREFIX_KEY . ':online_player';

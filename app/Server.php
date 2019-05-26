@@ -155,6 +155,11 @@ class Server
                 'online_player' => DataCenter::lenOnlinePlayer()
             ];
             $response->end(json_encode($data));
+        } elseif ($action == 'get_player_rank') {
+            $data = [
+                'players_rank' => DataCenter::getPlayersRank()
+            ];
+            $response->end(json_encode($data));
         }
     }
 }
