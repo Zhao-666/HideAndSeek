@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>HideAndSeek</title>
     <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
     <link rel="icon" href="data:;base64,=">
     <style>
         .gameItem {
@@ -53,6 +54,9 @@
     <div v-if="matching" style="display: inline">
         匹配中……
     </div>
+    <div v-if="onlinePlayer">
+        当前在线玩家：{{onlinePlayer}}
+    </div>
     <br>
     <hr>
     <div v-if="mapData" style="display: flex">
@@ -96,20 +100,66 @@
     var app = new Vue({
         el: '#app',
         data: {
-            playerId: 'player_' + Math.round(Math.random() * 1000),
             websock: null,
+            playerId: '',
             roomId: '',
             matching: false,
             mapData: null,
+            onlinePlayer: null,
         },
         created() {
+            this.initPlayerId();
             this.initWebSocket();
             this.initDirectionKey();
+            this.getServerInfo()
         },
         destroyed() {
             this.websock.close() //离开路由之后断开websocket连接
         },
         methods: {
+            getServerInfo() {
+                var that = this;
+                $.ajax({
+                    url: 'http://192.168.3.41:8812',
+                    type: 'get',
+                    dataType: 'json',
+                    data: {
+                        'a': 'get_online_player'
+                    },
+                    success: function (result) {
+                        that.onlinePlayer = result.online_player
+                    },
+                    error: function () {
+
+                    }
+                })
+            },
+            initPlayerId() {
+                var inputPlayerId = this.getUrlParam('player_id')
+                if (inputPlayerId !== '') {
+                    this.playerId = inputPlayerId
+                } else {
+                    this.playerId = 'player_' + Math.round(Math.random() * 1000)
+                }
+            },
+            getUrlParam(paramName) {
+                var url = document.location.toString();
+                var arrObj = url.split("?");
+                if (arrObj.length > 1) {
+                    var arrPara = arrObj[1].split("&");
+                    var arr;
+                    for (var i = 0; i < arrPara.length; i++) {
+                        arr = arrPara[i].split("=");
+                        if (arr !== null && arr[0] === paramName) {
+                            return arr[1];
+                        }
+                    }
+                    return '';
+                }
+                else {
+                    return "";
+                }
+            },
             initDirectionKey() {
                 var that = this
                 document.onkeydown = function () {
@@ -176,6 +226,9 @@
             },
             websocketclose(e) {  //关闭
                 console.log('断开连接', e);
+                if (e.code === 4000) {
+                    alert('该player_id已在线')
+                }
             },
             clickDirect(direction) {
                 let actions = {"code": 602, 'direction': direction};

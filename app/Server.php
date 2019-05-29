@@ -46,6 +46,7 @@ class Server
         $this->ws->on('close', [$this, 'onClose']);
         $this->ws->on('task', [$this, 'onTask']);
         $this->ws->on('finish', [$this, 'onFinish']);
+        $this->ws->on('request', [$this, 'onRequest']);
         $this->ws->start();
     }
 
@@ -63,12 +64,20 @@ class Server
         DataCenter::$server = $server;
     }
 
+    /**
+     * @param $server \swoole_websocket_server
+     * @param $request
+     */
     public function onOpen($server, $request)
     {
         DataCenter::log(sprintf('client open fd：%d', $request->fd));
 
         $playerId = $request->get['player_id'];
-        DataCenter::setPlayerInfo($playerId, $request->fd);
+        if (empty(DataCenter::getOnlinePlayer($playerId))) {
+            DataCenter::setPlayerInfo($playerId, $request->fd);
+        } else {
+            $server->disconnect($request->fd, 4000, '该player_id已在线');
+        }
     }
 
     public function onMessage($server, $request)
@@ -93,6 +102,7 @@ class Server
     public function onClose($server, $fd)
     {
         DataCenter::log(sprintf('client close fd：%d', $fd));
+        DataCenter::delPlayerInfo($fd);
     }
 
     public function onTask($server, $taskId, $srcWorkerId, $data)
@@ -122,5 +132,18 @@ class Server
                 break;
         }
     }
+
+    public function onRequest($request, $response)
+    {
+        DataCenter::log("onRequest");
+        $action = $request->get['a'];
+        if ($action == 'get_online_player') {
+            $data = [
+                'online_player' => DataCenter::lenOnlinePlayer()
+            ];
+            $response->end(json_encode($data));
+        }
+    }
 }
+
 new Server();
