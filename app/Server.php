@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: Next
- * Date: 2019/4/18
- * Time: 23:02
+ * Date: 2019/3/17
+ * Time: 16:59
  */
 
 use App\Manager\DataCenter;
@@ -140,6 +140,11 @@ class Server
         if ($action == 'get_online_player') {
             $data = [
                 'online_player' => DataCenter::lenOnlinePlayer()
+            ];
+            $response->end(json_encode($data));
+        } elseif ($action == 'get_player_rank') {
+            $data = [
+                'players_rank' => DataCenter::getPlayersRank()
             ];
             $response->end(json_encode($data));
         }

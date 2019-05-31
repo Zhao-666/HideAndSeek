@@ -54,8 +54,22 @@
     <div v-if="matching" style="display: inline">
         匹配中……
     </div>
-    <div v-if="onlinePlayer">
-        当前在线玩家：{{onlinePlayer}}
+    <div v-if="roomId">
+        房间号：{{roomId}}
+    </div>
+    <div v-else>
+        <div v-if="onlinePlayer">
+            当前在线玩家：{{onlinePlayer}}
+        </div>
+        <div v-if="playersRank">
+            <br>
+            游戏排行榜：
+            <br>
+            <template v-for="times, player in playersRank">
+                玩家：{{player}} 胜利次数：{{times}}
+                <br>
+            </template>
+        </div>
     </div>
     <br>
     <hr>
@@ -106,6 +120,7 @@
             matching: false,
             mapData: null,
             onlinePlayer: null,
+            playersRank:null
         },
         created() {
             this.initPlayerId();
@@ -128,6 +143,20 @@
                     },
                     success: function (result) {
                         that.onlinePlayer = result.online_player
+                    },
+                    error: function () {
+
+                    }
+                })
+                $.ajax({
+                    url: 'http://192.168.3.41:8812',
+                    type: 'get',
+                    dataType: 'json',
+                    data: {
+                        'a': 'get_player_rank'
+                    },
+                    success: function (result) {
+                        that.playersRank = result.players_rank
                     },
                     error: function () {
 

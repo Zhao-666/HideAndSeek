@@ -124,6 +124,7 @@ class Logic
         if ($gameManager->isGameOver()) {
             $players = $gameManager->getPlayers();
             $winner = current($players)->getId();
+            DataCenter::addPlayerWinTimes($winner);
             foreach ($players as $player) {
                 Sender::sendMessage($player->getId(), Sender::MSG_GAME_OVER, ['winner' => $winner]);
                 DataCenter::delPlayerRoomId($player->getId());
