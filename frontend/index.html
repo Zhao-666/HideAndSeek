@@ -132,9 +132,9 @@
             this.initWebSocket();
             this.initDirectionKey();
             var that = this
-            setInterval(function () {
+            setTimeout(function () {
                 that.getServerInfo()
-            }, 1000)
+            }, 100)
         },
         destroyed() {
             this.websock.close() //离开路由之后断开websocket连接
