@@ -258,6 +258,10 @@
                             alert('游戏结束~胜者是：' + responseData.winner)
                         }, 200)
                         break;
+                    case 1006:
+                        setTimeout(function () {
+                            alert('你的敌人跑路了')
+                        }, 200)
                 }
             },
             websocketsend(Data) {//数据发送

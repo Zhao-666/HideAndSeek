@@ -111,6 +111,7 @@ class Server
     public function onClose($server, $fd)
     {
         DataCenter::log(sprintf('client close fd：%d', $fd));
+        $this->logic->closeRoom(DataCenter::getPlayerId($fd));
         DataCenter::delPlayerInfo($fd);
     }
 
