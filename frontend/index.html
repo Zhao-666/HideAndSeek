@@ -125,13 +125,16 @@
             roomId: '',
             mapData: null,
             onlinePlayer: null,
-            playersRank:null
+            playersRank: null
         },
         created() {
             this.initPlayerId()
             this.initWebSocket();
             this.initDirectionKey();
-            this.getServerInfo()
+            var that = this
+            setInterval(function () {
+                that.getServerInfo()
+            }, 1000)
         },
         destroyed() {
             this.websock.close() //离开路由之后断开websocket连接
