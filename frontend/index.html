@@ -127,9 +127,9 @@
     var wsPort = "8811";
     var frontendPort = "8812";
 
-//    var host = "193.112.214.140";
-//    var wsPort = "31200";
-//    var frontendPort = "31201";
+    //    var host = "193.112.214.140";
+    //    var wsPort = "31200";
+    //    var frontendPort = "31201";
 
     var app = new Vue({
         el: '#app',
@@ -192,7 +192,7 @@
             initPlayerId() {
                 var inputPlayerId = this.getUrlParam('player_id')
                 if (inputPlayerId !== '') {
-                    this.playerId = inputPlayerId
+                    this.playerId = decodeURIComponent(inputPlayerId)
                 } else {
                     this.playerId = 'player_' + Math.round(Math.random() * 1000)
                 }
