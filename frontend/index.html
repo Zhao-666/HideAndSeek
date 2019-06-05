@@ -48,11 +48,16 @@
 <div id="app">
     <label>
         玩家ID：
-        <input type="text" :value="playerId">
+        <input type="text" v-model="playerId">
     </label>
-    <button @click="matchPlayer">匹配</button>
     <div v-if="matching" style="display: inline">
         匹配中……
+    </div>
+    <div v-else style="display: inline">
+        <div v-if="!roomId" style="display: inline">
+            <button @click="changeName">确认改名</button>
+            <button @click="matchPlayer">匹配</button>
+        </div>
     </div>
     <div v-if="roomId">
         房间号：{{roomId}}
@@ -114,6 +119,15 @@
 </div>
 
 <script>
+
+    var host = "192.168.3.41";
+    var wsPort = "8811";
+    var frontendPort = "8812";
+
+//    var host = "193.112.214.140";
+//    var wsPort = "31200";
+//    var frontendPort = "31201";
+
     var app = new Vue({
         el: '#app',
         data: {
@@ -125,7 +139,7 @@
             roomId: '',
             mapData: null,
             onlinePlayer: null,
-            playersRank: null
+            playersRank: null,
         },
         created() {
             this.initPlayerId()
@@ -143,7 +157,7 @@
             getServerInfo() {
                 var that = this
                 $.ajax({
-                    url: 'http://192.168.3.41:8812',
+                    url: "http://" + host + ":" + frontendPort,
                     type: 'get',
                     dataType: 'json',
                     data: {
@@ -157,7 +171,7 @@
                     }
                 })
                 $.ajax({
-                    url: 'http://192.168.3.41:8812',
+                    url: "http://" + host + ":" + frontendPort,
                     type: 'get',
                     dataType: 'json',
                     data: {
@@ -215,6 +229,10 @@
                     }
                 }
             },
+            changeName() {
+                window.location.href = window.location.origin +
+                    window.location.pathname + '?player_id=' + this.playerId
+            },
             //匹配玩家
             matchPlayer() {
                 let actions = {"code": 600};
@@ -227,7 +245,7 @@
                 this.matching = false
             },
             initWebSocket() { //初始化weosocket
-                const wsuri = "ws://192.168.3.41:8811?player_id=" + this.playerId;
+                const wsuri = "ws://" + host + ":" + wsPort + "?player_id=" + this.playerId;
                 this.websock = new WebSocket(wsuri);
                 this.websock.onmessage = this.websocketonmessage;
                 this.websock.onopen = this.websocketonopen;
