@@ -50,11 +50,11 @@
         玩家ID：
         <input type="text" v-model="playerId">
     </label>
-    <div v-if="matching" style="display: inline">
-        匹配中……
-    </div>
     <div v-if="wsError" style="display: inline;color: red">
         您已断线，请刷新页面重新连接
+    </div>
+    <div v-if="matching" style="display: inline">
+        匹配中……
     </div>
     <div v-else style="display: inline">
         <div v-if="!roomId" style="display: inline">
