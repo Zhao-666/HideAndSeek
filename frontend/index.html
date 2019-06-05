@@ -53,6 +53,9 @@
     <div v-if="matching" style="display: inline">
         匹配中……
     </div>
+    <div v-if="wsError" style="display: inline;color: red">
+        您已断线，请刷新页面重新连接
+    </div>
     <div v-else style="display: inline">
         <div v-if="!roomId" style="display: inline">
             <button @click="changeName">确认改名</button>
@@ -140,6 +143,7 @@
             mapData: null,
             onlinePlayer: null,
             playersRank: null,
+            wsError: false
         },
         created() {
             this.initPlayerId()
@@ -288,6 +292,7 @@
             websocketclose(e) {  //关闭
                 console.log('断开连接', e);
                 if (e.code === 4000) {
+                    this.wsError = true
                     alert('该player_id已在线')
                 }
             },
