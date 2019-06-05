@@ -2,18 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maxinum-scale=1,width=device-width">
     <title>HideAndSeek</title>
     <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
     <link rel="icon" href="data:;base64,=">
     <style>
+        .container{
+            display: flex;
+            align-items: center;
+        }
+        .map-container{
+            max-width: 510px;
+            width: 100%;
+        }
+
         .gameItem {
             display: inline-block;
             width: 100px;
-            height: 100px;
+            box-sizing: border-box;
+            max-height: 100px;
             line-height: 100px;
             border: 1px solid black;
             text-align: center;
+        }
+
+        .map-container div{
+
         }
 
         .wall {
@@ -40,6 +55,39 @@
 
         .clickButton {
             background: #dddddd;
+        }
+        @media screen and (max-width: 1020px) {
+            .container{
+                display: block;
+            }
+            .gameItem{
+                width: 20%;
+                line-height: 1;
+                position: relative;
+                padding: calc(10% - 1px) 0;
+            }
+            .gameItem::after{
+                content:".";
+                height:0;
+                visibility:hidden;
+                display:block;
+                clear:both;
+            }
+            .gameItem span{
+                position: absolute;
+                display: block;
+                width: 100%;
+                text-align: center;
+                top: 50%;
+                left: 0;
+                margin-top: -11px;
+            }
+            .operator{
+                margin-top: 10px;
+            }
+            .operator .gameItem{
+                width: 19%;
+            }
         }
     </style>
 </head>
@@ -84,36 +132,50 @@
         本局玩家类型：{{playerTypeArr[playerType]}}
     </div>
     <hr>
-    <div v-if="mapData" style="display: flex">
-        <div>
+    <div v-if="mapData" class="container">
+        <div class="map-container">
             <template v-for="column in mapData">
                 <div>
                     <template v-for="item in column">
-                        <div v-if="item==playerId" class="gameItem player">{{playerId}}</div>
-                        <div v-else-if="item==0" class="gameItem wall">墙</div>
-                        <div v-else-if="item==1" class="gameItem road">路</div>
-                        <div v-else class="gameItem player">{{item}}</div>
+                        <div v-if="item==playerId" class="gameItem player">
+                            <span>{{playerId}}</span>
+                        </div>
+                        <div v-else-if="item==0" class="gameItem wall">
+                            <span>墙</span>
+                        </div>
+                        <div v-else-if="item==1" class="gameItem road">
+                            <span>路</span>
+                        </div>
+                        <div v-else class="gameItem player">
+                            <span>{{item}}</span>
+                        </div>
                     </template>
                 </div>
             </template>
         </div>
-        <div>
+        <div class="operator">
             <template v-for="i in 5">
                 <div @mouseup="removeClickClass">
-                    <template v-for="j in 5">
+                    <template v-for="j in 5" v-if="i > 1">
                         <div v-if="i==2&&j==3" @mousedown="clickDirect('up')" data-direction="up"
-                             class="gameItem gameButton">上
+                             class="gameItem gameButton">
+                            <span>上</span>
                         </div>
                         <div v-else-if="i==3&&j==2" @mousedown="clickDirect('left')" data-direction="left"
-                             class="gameItem gameButton">左
+                             class="gameItem gameButton">
+                            <span>左</span>
                         </div>
                         <div v-else-if="i==3&&j==4" @mousedown="clickDirect('right')" data-direction="right"
-                             class="gameItem gameButton">右
+                             class="gameItem gameButton">
+                            <span>右</span>
                         </div>
                         <div v-else-if="i==4&&j==3" @mousedown="clickDirect('down')" data-direction="down"
-                             class="gameItem gameButton">下
+                             class="gameItem gameButton">
+                            <span>下</span>
                         </div>
-                        <div v-else class="gameItem space">无</div>
+                        <div v-else class="gameItem space">
+                            <span>无</span>
+                        </div>
                     </template>
                 </div>
             </template>
