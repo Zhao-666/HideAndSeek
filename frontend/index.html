@@ -8,11 +8,12 @@
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
     <link rel="icon" href="data:;base64,=">
     <style>
-        .container{
+        .container {
             display: flex;
             align-items: center;
         }
-        .map-container{
+
+        .map-container {
             max-width: 510px;
             width: 100%;
         }
@@ -27,7 +28,7 @@
             text-align: center;
         }
 
-        .map-container div{
+        .map-container div {
 
         }
 
@@ -56,24 +57,28 @@
         .clickButton {
             background: #dddddd;
         }
+
         @media screen and (max-width: 1020px) {
-            .container{
+            .container {
                 display: block;
             }
-            .gameItem{
+
+            .gameItem {
                 width: 20%;
                 line-height: 1;
                 position: relative;
                 padding: calc(10% - 1px) 0;
             }
-            .gameItem::after{
-                content:".";
-                height:0;
-                visibility:hidden;
-                display:block;
-                clear:both;
+
+            .gameItem::after {
+                content: ".";
+                height: 0;
+                visibility: hidden;
+                display: block;
+                clear: both;
             }
-            .gameItem span{
+
+            .gameItem span {
                 position: absolute;
                 display: block;
                 width: 100%;
@@ -82,10 +87,12 @@
                 left: 0;
                 margin-top: -11px;
             }
-            .operator{
+
+            .operator {
                 margin-top: 10px;
             }
-            .operator .gameItem{
+
+            .operator .gameItem {
                 width: 19%;
             }
         }
@@ -108,6 +115,11 @@
         <div v-if="!roomId" style="display: inline">
             <button @click="changeName">确认改名</button>
             <button @click="matchPlayer">匹配</button>
+        </div>
+        <div style="padding-top: 5px;">
+            对手ID：
+            <input type="text" v-model="opponentId">
+            <button @click="makeChallenge">挑战</button>
         </div>
     </div>
     <div v-if="roomId">
@@ -205,7 +217,8 @@
             mapData: null,
             onlinePlayer: null,
             playersRank: null,
-            wsError: false
+            wsError: false,
+            opponentId: '',
         },
         created() {
             this.initPlayerId()
@@ -220,6 +233,17 @@
             this.websock.close() //离开路由之后断开websocket连接
         },
         methods: {
+            makeChallenge() {
+                if (!this.opponentId) {
+                    alert('请输入对手ID');
+                    return;
+                }
+                let actions = {
+                    "code": 603,
+                    "opponent_id": this.opponentId
+                };
+                this.websocketsend(actions);
+            },
             getServerInfo() {
                 var that = this
                 $.ajax({
@@ -346,6 +370,28 @@
                         setTimeout(function () {
                             alert('你的敌人跑路了')
                         }, 200)
+                        break;
+                    case 1007:
+                        alert("对手不在线")
+                        break;
+                    case 1008:
+                        var challengerId = responseData.challenger_id;
+                        var msg = "玩家 " + challengerId + " 邀请你进行对战，是否接受";
+                        let actions = {
+                            "code": 604,
+                            "challenger_id": challengerId
+                        };
+                        if (!confirm(msg)) {
+                            actions = {
+                                "code": 605,
+                                "challenger_id": challengerId
+                            };
+                        }
+                        this.websocketsend(actions);
+                        break;
+                    case 1009:
+                        alert("对方拒绝了你的挑战");
+                        break;
                 }
             },
             websocketsend(Data) {//数据发送

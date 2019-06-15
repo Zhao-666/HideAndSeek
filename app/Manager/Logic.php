@@ -15,6 +15,28 @@ class Logic
 {
     const PLAYER_DISPLAY_LEN = 2;
 
+    public function acceptChallenge($challengerId, $playerId)
+    {
+        $this->createRoom($challengerId, $playerId);
+    }
+
+    public function refuseChallenge($challengerId)
+    {
+        Sender::sendMessage($challengerId, Sender::MSG_REFUSE_CHALLENGE);
+    }
+
+    public function makeChallenge($opponentId, $playerId)
+    {
+        if (empty(DataCenter::getOnlinePlayer($opponentId))) {
+            Sender::sendMessage($playerId, Sender::MSG_OPPONENT_OFFLINE);
+        } else {
+            $data = [
+                'challenger_id' => $playerId
+            ];
+            Sender::sendMessage($opponentId, Sender::MSG_MAKE_CHALLENGE, $data);
+        }
+    }
+
     public function matchPlayer($playerId)
     {
         //将用户放入队列中
