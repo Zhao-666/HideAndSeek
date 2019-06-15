@@ -366,7 +366,7 @@
                         this.mapData = responseData.map_data;
                         let players = responseData.players;
                         this.playerType = players[this.playerId].type
-                        if (!this.timerId){
+                        if (!this.timerId) {
                             this.timeLimit = responseData.time_limit
                             var that = this
                             this.timerId = setInterval(function () {
@@ -383,9 +383,7 @@
                         break;
                     case 1006:
                         clearInterval(this.timerId)
-                        setTimeout(function () {
-                            alert('你的敌人跑路了')
-                        }, 200)
+                        alert('你的敌人跑路了')
                         break;
                     case 1007:
                         alert("对手不在线")
