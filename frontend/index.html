@@ -116,14 +116,19 @@
             <button @click="changeName">确认改名</button>
             <button @click="matchPlayer">匹配</button>
         </div>
-        <div style="padding-top: 5px;">
+        <div v-if="!roomId" style="padding-top: 5px;">
             对手ID：
             <input type="text" v-model="opponentId">
             <button @click="makeChallenge">挑战</button>
         </div>
     </div>
     <div v-if="roomId">
-        房间号：{{roomId}}
+        <div>
+            房间号：{{roomId}}
+        </div>
+        <div v-if="timeLimit">
+            剩余时间：{{timeLimit}}
+        </div>
     </div>
     <div v-else>
         <div v-if="onlinePlayer">
@@ -219,6 +224,8 @@
             playersRank: null,
             wsError: false,
             opponentId: '',
+            timeLimit: null,
+            timerId: null
         },
         created() {
             this.initPlayerId()
@@ -359,14 +366,23 @@
                         this.mapData = responseData.map_data;
                         let players = responseData.players;
                         this.playerType = players[this.playerId].type
+                        if (!this.timerId){
+                            this.timeLimit = responseData.time_limit
+                            var that = this
+                            this.timerId = setInterval(function () {
+                                that.timeLimit--
+                            }, 1000);
+                        }
                         break;
                     case 1005://游戏结束
                         this.winner = responseData.winner
+                        clearInterval(this.timerId)
                         setTimeout(function () {
                             alert('游戏结束~胜者是：' + responseData.winner)
                         }, 200)
                         break;
                     case 1006:
+                        clearInterval(this.timerId)
                         setTimeout(function () {
                             alert('你的敌人跑路了')
                         }, 200)
