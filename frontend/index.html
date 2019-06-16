@@ -54,6 +54,13 @@
     <div v-if="matching" style="display: inline">
         匹配中……
     </div>
+    <div v-else>
+        <div v-if="!roomId" style="padding-top: 5px;">
+            对手ID：
+            <input type="text" v-model="opponentId">
+            <button @click="makeChallenge">挑战</button>
+        </div>
+    </div>
     <div v-if="roomId">
         房间号：{{roomId}}
     </div>
@@ -120,7 +127,8 @@
             matching: false,
             mapData: null,
             onlinePlayer: null,
-            playersRank: null
+            playersRank: null,
+            opponentId: '',
         },
         created() {
             this.initPlayerId();
@@ -132,6 +140,17 @@
             this.websock.close() //离开路由之后断开websocket连接
         },
         methods: {
+            makeChallenge() {
+                if (!this.opponentId) {
+                    alert('请输入对手ID');
+                    return;
+                }
+                let actions = {
+                    "code": 603,
+                    "opponent_id": this.opponentId
+                };
+                this.websocketsend(actions);
+            },
             getServerInfo() {
                 var that = this;
                 $.ajax({
@@ -250,6 +269,27 @@
                         break;
                     case 1006:
                         alert('你的敌人跑路了')
+                        break;
+                    case 1007:
+                        alert("对手不在线")
+                        break;
+                    case 1008:
+                        var challengerId = responseData.challenger_id;
+                        var msg = "玩家 " + challengerId + " 邀请你进行对战，是否接受";
+                        let actions = {
+                            "code": 604,
+                            "challenger_id": challengerId
+                        };
+                        if (!confirm(msg)) {
+                            actions = {
+                                "code": 605,
+                                "challenger_id": challengerId
+                            };
+                        }
+                        this.websocketsend(actions);
+                        break;
+                    case 1009:
+                        alert("对方拒绝了你的挑战");
                         break;
                 }
             },

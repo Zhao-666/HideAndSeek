@@ -17,6 +17,9 @@ class Server
     const CLIENT_CODE_MATCH_PLAYER = 600;
     const CLIENT_CODE_START_ROOM = 601;
     const CLIENT_CODE_MOVE_PLAYER = 602;
+    const CLIENT_CODE_MAKE_CHALLENGE = 603;
+    const CLIENT_CODE_ACCEPT_CHALLENGE = 604;
+    const CLIENT_CODE_REFUSE_CHALLENGE = 605;
 
     const HOST = '0.0.0.0';
     const PORT = 8811;
@@ -95,6 +98,15 @@ class Server
                 break;
             case self::CLIENT_CODE_MOVE_PLAYER:
                 $this->logic->movePlayer($data['direction'], $playerId);
+                break;
+            case self::CLIENT_CODE_MAKE_CHALLENGE:
+                $this->logic->makeChallenge($data['opponent_id'], $playerId);
+                break;
+            case self::CLIENT_CODE_ACCEPT_CHALLENGE:
+                $this->logic->acceptChallenge($data['challenger_id'], $playerId);
+                break;
+            case self::CLIENT_CODE_REFUSE_CHALLENGE:
+                $this->logic->refuseChallenge($data['challenger_id']);
                 break;
         }
     }
