@@ -62,7 +62,12 @@
         </div>
     </div>
     <div v-if="roomId">
-        房间号：{{roomId}}
+        <div>
+            房间号：{{roomId}}
+        </div>
+        <div v-if="timeLimit">
+            剩余时间：{{timeLimit}}
+        </div>
     </div>
     <div v-else>
         <div v-if="onlinePlayer">
@@ -79,6 +84,9 @@
         </div>
     </div>
     <br>
+    <div v-if="playerType">
+        本局玩家类型：{{playerTypeArr[playerType]}}
+    </div>
     <hr>
     <div v-if="mapData" style="display: flex">
         <div>
@@ -129,6 +137,10 @@
             onlinePlayer: null,
             playersRank: null,
             opponentId: '',
+            playerType: null,
+            playerTypeArr: [0, '寻找者', '躲藏者'],
+            timeLimit: null,
+            timerId: null
         },
         created() {
             this.initPlayerId();
@@ -260,14 +272,27 @@
                         break;
                     case 1004://游戏数据
                         this.mapData = responseData.map_data;
+                        if (!this.playerType){
+                            let players = responseData.players;
+                            this.playerType = players[this.playerId].type
+                        }
+                        if (!this.timerId) {
+                            this.timeLimit = responseData.time_limit
+                            var that = this
+                            this.timerId = setInterval(function () {
+                                that.timeLimit--
+                            }, 1000);
+                        }
                         break;
                     case 1005://游戏结束
                         this.winner = responseData.winner
+                        clearInterval(this.timerId)
                         setTimeout(function () {
                             alert('游戏结束~胜者是：' + responseData.winner)
                         }, 200)
                         break;
                     case 1006:
+                        clearInterval(this.timerId)
                         alert('你的敌人跑路了')
                         break;
                     case 1007:
