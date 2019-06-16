@@ -120,7 +120,7 @@
             matching: false,
             mapData: null,
             onlinePlayer: null,
-            playersRank:null
+            playersRank: null
         },
         created() {
             this.initPlayerId();
@@ -247,6 +247,9 @@
                         setTimeout(function () {
                             alert('游戏结束~胜者是：' + responseData.winner)
                         }, 200)
+                        break;
+                    case 1006:
+                        alert('你的敌人跑路了')
                         break;
                 }
             },

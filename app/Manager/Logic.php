@@ -71,6 +71,26 @@ class Logic
         }
     }
 
+    public function closeRoom($closerId)
+    {
+        $roomId = DataCenter::getPlayerRoomId($closerId);
+        if (!empty($roomId)) {
+            /**
+             * @var Game $gameManager
+             * @var Player $player
+             */
+            $gameManager = DataCenter::$global['rooms'][$roomId]['manager'];
+            $players = $gameManager->getPlayers();
+            foreach ($players as $player) {
+                if ($player->getId() != $closerId) {
+                    Sender::sendMessage($player->getId(), Sender::MSG_OTHER_CLOSE);
+                }
+                DataCenter::delPlayerRoomId($player->getId());
+            }
+            unset(DataCenter::$global['rooms'][$roomId]);
+        }
+    }
+
     private function sendGameInfo($roomId)
     {
         /**
