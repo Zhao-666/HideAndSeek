@@ -149,6 +149,10 @@ class Logic
 
     private function gameOver($roomId, $winner)
     {
+        /**
+         * @var Game $gameManager
+         * @var Player $player
+         */
         $gameManager = DataCenter::$global['rooms'][$roomId]['manager'];
         $players = $gameManager->getPlayers();
         DataCenter::addPlayerWinTimes($winner);

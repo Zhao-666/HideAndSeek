@@ -364,8 +364,10 @@
                         break;
                     case 1004://游戏数据
                         this.mapData = responseData.map_data;
-                        let players = responseData.players;
-                        this.playerType = players[this.playerId].type
+                        if (!this.playerType){
+                            let players = responseData.players;
+                            this.playerType = players[this.playerId].type
+                        }
                         if (!this.timerId) {
                             this.timeLimit = responseData.time_limit
                             var that = this
