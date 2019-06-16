@@ -22,6 +22,7 @@
 - Swoole WebSocket Server
 - Swoole Task Worker
 - Swoole Static Handler
+- Swoole Timer After
 - Vuejs
 - HTML WebSocket
 - Redis String
